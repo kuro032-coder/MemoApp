@@ -1,0 +1,75 @@
+﻿<Window x:Class="MemoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MemoApp"
+        mc:Ignorable="d"
+        Title="メモ" Height="450" Width="750">
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+S" Command="Save"/>
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <!-- 左（リストボックス） -->
+            <ColumnDefinition Width="*"/>
+            <!-- 右（メモ部分） -->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 上部ボタンなど -->
+            <RowDefinition Height="*"/>
+            <!-- 下部メイン -->
+        </Grid.RowDefinitions>
+
+        <!-- 新規ボタン（上部左側） -->
+        <Button x:Name="NewMemoButton" Grid.Row="0" Grid.Column="0" Content="新規作成" FontSize="20" Width="124" Click="NewMemoButton_Click" Margin="5"/>
+
+        <!-- タイトル入力（上部右側） -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5">
+            <Label Content="タイトル" FontSize="20"/>
+            <TextBox x:Name="TitleTextBox" Width="300" FontSize="20" TextChanged="TitleTextBox_TextChanged"/>
+            <TextBlock x:Name="SaveStatus" Text="" Foreground="Red" Margin="30,5,20,0" FontSize="18"/>
+        </StackPanel>
+
+        <!-- 左側：リスト -->
+        <ListBox x:Name="MemoTitleListBox"
+             Grid.Row="1" Grid.Column="0"
+             ItemsSource="{Binding Memos}"
+             AllowDrop="True"
+             DisplayMemberPath="Title"
+             SelectedValuePath="Id"
+             FontSize="14"
+             SelectionChanged="MemoTitleListBox_SelectionChanged"
+             PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown"
+             MouseMove="MemoTitleListBox_MouseMove"
+             Drop="ListBox_Drop">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="削除" Click="DeleteMemo_Click"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+
+        <!-- 右側：メモ欄 -->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBox x:Name="MemoTextBox"
+                 Grid.Row="0"
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"
+                 TextWrapping="Wrap"
+                 FontSize="20"
+                 TextChanged="MemoTextBox_TextChanged"
+                 Margin="5"/>
+
+            <Button x:Name="SaveMemoButton" Grid.Row="1" Content="保存" FontSize="20" Width="124" Click="SaveMemoButton_Click" Margin="5"/>
+        </Grid>
+    </Grid>
+</Window>
