@@ -20,11 +20,6 @@ namespace MemoApp
         private Point _dragStartPoint;
         private ObservableCollection<Memo> Memos { get; set; } = [];
 
-        public static RoutedUICommand Save { get; } = 
-            new RoutedUICommand("Save", "Save", typeof(MainWindow),
-                new InputGestureCollection() { new KeyGesture(Key.S, ModifierKeys.Control) }
-        );
-
         public MainWindow()
         {
             InitializeComponent();
@@ -34,7 +29,7 @@ namespace MemoApp
             MemoTitleListBox.ItemsSource = Memos;
             LoadMemos();
 
-            CommandBindings.Add(new CommandBinding(Save, SaveMemoButton_Click));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveMemoButton_Click));
         }
 
         private void LoadMemos()

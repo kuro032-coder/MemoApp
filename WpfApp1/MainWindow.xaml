@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="メモ" Height="450" Width="750">
     <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+S" Command="Save"/>
+        <KeyBinding Gesture="Ctrl+S" Command="ApplicationCommands.Save"/>
     </Window.InputBindings>
 
     <Grid>
