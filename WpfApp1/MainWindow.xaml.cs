@@ -30,6 +30,8 @@ namespace MemoApp
             LoadMemos();
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveMemoButton_Click));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.New, NewMemoButton_Click));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteMemo_Click));
         }
 
         private void LoadMemos()
@@ -60,14 +62,19 @@ namespace MemoApp
 
         private void DeleteMemo_Click(object sender, RoutedEventArgs e)
         {
-            if (MemoTitleListBox.SelectedItem is Memo selected)
+            if (MessageBox.Show("このメモを削除しますか?",
+                    "メモの削除",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                _repo.Delete(selected.Id);
-                LoadMemos();
-                TitleTextBox.Clear();
-                MemoTextBox.Clear();
-                SaveStatus.Text = "";  //編集中に削除した場合を考慮
-
+                if (MemoTitleListBox.SelectedItem is Memo selected)
+                {
+                    _repo.Delete(selected.Id);
+                    LoadMemos();
+                    TitleTextBox.Clear();
+                    MemoTextBox.Clear();
+                    SaveStatus.Text = "";  //編集中に削除した場合を考慮
+                }
             }
         }
         private void NewMemoButton_Click(object sender, RoutedEventArgs e)
