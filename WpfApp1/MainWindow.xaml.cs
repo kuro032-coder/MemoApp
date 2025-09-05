@@ -45,17 +45,17 @@ namespace MemoApp
 
         private void SaveMemoButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MemoTitleListBox.SelectedItem is Memo selected)
+            if ((MemoTitleListBox.SelectedItem is Memo selected))
             {
-                var id = selected.Id;
                 _repo.Update(selected.Id, TitleTextBox.Text, MemoTextBox.Text);
                 LoadMemos();
-                MemoTitleListBox.SelectedItem = Memos.FirstOrDefault(m => m.Id == id);
+                MemoTitleListBox.SelectedItem = Memos.FirstOrDefault(m => m.Id == selected.Id);
             }
             else
             {
-                _repo.Save(TitleTextBox.Text, MemoTextBox.Text);
+                int newId = _repo.Save(TitleTextBox.Text, MemoTextBox.Text);
                 LoadMemos();
+                MemoTitleListBox.SelectedItem = Memos.FirstOrDefault(m => m.Id == newId);
             }
             SaveStatus.Text = "";  //編集中を解除
         }

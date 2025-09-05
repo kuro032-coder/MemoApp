@@ -65,22 +65,25 @@ namespace MemoApp
             return memos;
         }
 
-        public void Save(string title, string content)
+        public int Save(string title, string content)
         {
             using var connection = new SqliteConnection(_databasePath);
             connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                INSERT INTO Memos (Title, Memo, OrderNum)
+                VALUES (@title, @memo, (SELECT IFNULL(MAX(OrderNum), 0) + 1 FROM Memos));
+                SELECT last_insert_rowid();
+            ";
+            command.Parameters.AddWithValue("@title", title);
+            command.Parameters.AddWithValue("@memo", content);
 
-            var getMaxCommand = connection.CreateCommand();
-            getMaxCommand.CommandText = "SELECT IFNULL(MAX(OrderNum), -1) FROM Memos";
-            var maxOrder = Convert.ToInt32(getMaxCommand.ExecuteScalar());
+            var result = command.ExecuteScalar();
+            var newId = result != null ? Convert.ToInt64(result)
+                                       : throw new InvalidOperationException("新規メモの保存に失敗しました。");
 
-            var insertCommand = connection.CreateCommand();
-            insertCommand.CommandText =
-                "INSERT INTO Memos (Title, Memo, OrderNum) VALUES ($title, $memo, $order)";
-            insertCommand.Parameters.AddWithValue("$title", title);
-            insertCommand.Parameters.AddWithValue("$memo", content);
-            insertCommand.Parameters.AddWithValue("$order", maxOrder + 1);
-            insertCommand.ExecuteNonQuery();
+            return (int)newId;
         }
 
         public void Update(int id, string title, string content)
@@ -110,9 +113,9 @@ namespace MemoApp
             connection.Open();
 
             var command = connection.CreateCommand();
-            command.CommandText = "UPDATE Memos SET OrderNum = $orderNum WHERE Id = $id";
-            command.Parameters.AddWithValue("$orderNum", orderNum);
-            command.Parameters.AddWithValue("$id", id);
+            command.CommandText = "UPDATE Memos SET OrderNum = @orderNum WHERE Id = @id";
+            command.Parameters.AddWithValue("@orderNum", orderNum);
+            command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
         }
     }
