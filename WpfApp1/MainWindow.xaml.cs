@@ -112,16 +112,16 @@ namespace MemoApp
 
         private void MemoTitleListBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+            
+            var pos = e.GetPosition(null);
+            if (Math.Abs(pos.X - _dragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                Math.Abs(pos.Y - _dragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
             {
-                var pos = e.GetPosition(null);
-                if (Math.Abs(pos.X - _dragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(pos.Y - _dragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                if (MemoTitleListBox.SelectedItem != null)
                 {
-                    if (MemoTitleListBox.SelectedItem != null)
-                    {
-                        DragDrop.DoDragDrop(MemoTitleListBox, MemoTitleListBox.SelectedItem, DragDropEffects.Move);
-                    }
+                    DragDrop.DoDragDrop(MemoTitleListBox, MemoTitleListBox.SelectedItem, DragDropEffects.Move);
                 }
             }
         }
