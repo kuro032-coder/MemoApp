@@ -128,30 +128,28 @@ namespace MemoApp
 
         private void ListBox_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(Memo)))
+            if (!e.Data.GetDataPresent(typeof(Memo)))
+                return;
+
+            if (e.Data.GetData(typeof(Memo)) is not Memo droppedData)
+                return;
+
+            if (((FrameworkElement)e.OriginalSource).DataContext is not Memo target)
+                return;
+
+            int removedIdx = Memos.IndexOf(droppedData);
+            int targetIdx = Memos.IndexOf(target);
+
+            if (removedIdx == targetIdx)
+                return;
+
+            Memos.RemoveAt(removedIdx);
+            Memos.Insert(targetIdx, droppedData);
+
+            for (int i = 0; i < Memos.Count; i++)
             {
-                var droppedData = e.Data.GetData(typeof(Memo)) as Memo;
-                var target = ((FrameworkElement)e.OriginalSource).DataContext as Memo;
-
-                if (droppedData != null && target != null)
-                {
-                    int removedIdx = Memos.IndexOf(droppedData);
-                    int targetIdx = Memos.IndexOf(target);
-
-                    if (removedIdx != targetIdx)
-                    {
-                        Memos.RemoveAt(removedIdx);
-                        Memos.Insert(targetIdx, droppedData);
-
-                        for (int i = 0; i < Memos.Count; i++)
-                        {
-                            _repo.UpdateOrder(Memos[i].Id, i);
-                        }
-                    }
-
-                }
+                _repo.UpdateOrder(Memos[i].Id, i);
             }
         }
-
     }
 }
