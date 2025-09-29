@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,12 +11,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace MemoApp
 {
     public partial class MainWindow : Window
     {
+        private DispatcherTimer _autoSaveTimer;
         private readonly MemoRepository _repo;
         private Point _dragStartPoint;
         private ObservableCollection<Memo> Memos { get; set; } = [];
@@ -32,6 +34,10 @@ namespace MemoApp
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveMemoButton_Click));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, NewMemoButton_Click));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteMemo_Click));
+
+            _autoSaveTimer = new DispatcherTimer();
+            _autoSaveTimer.Interval = TimeSpan.FromSeconds(2);
+            _autoSaveTimer.Tick += AutoSaveTimer_Tick;
         }
 
         private void LoadMemos()
@@ -42,8 +48,13 @@ namespace MemoApp
                 Memos.Add(memo);
             }
         }
+        private void AutoSaveTimer_Tick(object? sender, EventArgs e)
+        {
+            _autoSaveTimer.Stop();
+            SaveMemoButton_Click(null, null);
+        }
 
-        private void SaveMemoButton_Click(object sender, RoutedEventArgs e)
+        private void SaveMemoButton_Click(object? sender, RoutedEventArgs? e)
         {
             if ((MemoTitleListBox.SelectedItem is Memo selected))
             {
@@ -57,7 +68,7 @@ namespace MemoApp
                 LoadMemos();
                 MemoTitleListBox.SelectedItem = Memos.FirstOrDefault(m => m.Id == newId);
             }
-            SaveStatus.Text = "";  //編集中を解除
+            SaveStatus.Text = "保存済";
         }
 
         private void DeleteMemo_Click(object sender, RoutedEventArgs e)
@@ -91,18 +102,22 @@ namespace MemoApp
             {
                 TitleTextBox.Text = selected.Title;
                 MemoTextBox.Text = selected.Content;
-                SaveStatus.Text = "";
+                SaveStatus.Text = "保存済";
             }
         }
 
         private void MemoTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             SaveStatus.Text = "編集中";
+            _autoSaveTimer.Stop();
+            _autoSaveTimer.Start();
         }
 
         private void TitleTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             SaveStatus.Text = "編集中";
+            _autoSaveTimer.Stop();
+            _autoSaveTimer.Start();
         }
 
         private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
