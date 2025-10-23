@@ -1,61 +1,135 @@
 ﻿<Window x:Class="MemoApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MemoApp"
-        mc:Ignorable="d"
-        Title="メモ" Height="500" Width="800">
-    <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+S" Command="ApplicationCommands.Save"/>
-        <KeyBinding Gesture="Ctrl+N" Command="ApplicationCommands.New"/>
-        <KeyBinding Gesture="Ctrl+D" Command="ApplicationCommands.Delete"/>
-    </Window.InputBindings>
+        Title="メモ帳"
+        Height="500" Width="800"
+        Background="#FFF8FB">
+
+    <Window.Resources>
+        <!-- 🎀 カラーパレット -->
+        <SolidColorBrush x:Key="PrimaryPink" Color="#FFB6C1"/>
+        <!-- ほんのりピンク -->
+        <SolidColorBrush x:Key="AccentPink" Color="#FF69B4"/>
+        <!-- 強めピンク -->
+        <SolidColorBrush x:Key="SoftBackground" Color="#FFF8FB"/>
+        <!-- 背景 -->
+        <SolidColorBrush x:Key="SoftBorder" Color="#FFD6E3"/>
+
+        <!-- 💖 ボタンスタイル -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="5" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentPink}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 💌 TextBox（角丸＋ふんわり影） -->
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SoftBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 🌼 ListBoxデザイン -->
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SoftBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SoftBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="2" Opacity="0.1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
-            <!-- 左（リストボックス） -->
             <ColumnDefinition Width="*"/>
-            <!-- 右（メモ部分） -->
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- 上部ボタンなど -->
             <RowDefinition Height="*"/>
-            <!-- 下部メイン -->
         </Grid.RowDefinitions>
 
-        <!-- 新規ボタン（上部左側） -->
-        <Button x:Name="NewMemoButton" Grid.Row="0" Grid.Column="0" Content="新規作成" FontSize="20" Width="124" Click="NewMemoButton_Click" Margin="5"/>
+        <!-- 上部ボタン -->
+        <Button x:Name="NewMemoButton"
+                Grid.Row="0" Grid.Column="0"
+                Content="＋ 新規作成"
+                Click="NewMemoButton_Click"/>
 
-        <!-- タイトル入力（上部右側） -->
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5">
-            <Label Content="タイトル" FontSize="20"/>
-            <TextBox x:Name="TitleTextBox" Width="300" FontSize="20" TextChanged="TitleTextBox_TextChanged"/>
-            <TextBlock x:Name="SaveStatus" Text="" Foreground="Red" Margin="30,5,20,0" FontSize="18"/>
+        <!-- タイトル入力 -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+            <Label Content="タイトル:" FontSize="20" VerticalAlignment="Center"/>
+            <TextBox x:Name="TitleTextBox" Width="300" TextChanged="TitleTextBox_TextChanged"/>
+            <TextBlock x:Name="SaveStatus" Text="" Foreground="{StaticResource AccentPink}" Margin="20,0,0,0" FontSize="16"/>
         </StackPanel>
+        
 
-        <!-- 左側：リスト -->
+
+        <!-- 左：メモ一覧 -->
         <ListBox x:Name="MemoTitleListBox"
-             Grid.Row="1" Grid.Column="0"
-             ItemsSource="{Binding Memos}"
-             AllowDrop="True"
-             DisplayMemberPath="Title"
-             SelectedValuePath="Id"
-             FontSize="14"
-             SelectionChanged="MemoTitleListBox_SelectionChanged"
-             PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown"
-             MouseMove="MemoTitleListBox_MouseMove"
-             Drop="ListBox_Drop">
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="削除" Click="DeleteMemo_Click"/>
-                </ContextMenu>
-            </ListBox.ContextMenu>
-        </ListBox>
+                 Grid.Row="1" Grid.Column="0"
+                 ItemsSource="{Binding Memos}"
+                 DisplayMemberPath="Title"
+                 SelectedValuePath="Id"
+                 AllowDrop="True"
+                 SelectionChanged="MemoTitleListBox_SelectionChanged"
+                 PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown"
+                 MouseMove="MemoTitleListBox_MouseMove"
+                 Drop="ListBox_Drop"/>
 
-        <!-- 右側：メモ欄 -->
+        <!-- 右：メモ本文 -->
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -63,15 +137,17 @@
             </Grid.RowDefinitions>
 
             <TextBox x:Name="MemoTextBox"
-                 Grid.Row="0"
-                 AcceptsReturn="True"
-                 VerticalScrollBarVisibility="Auto"
-                 TextWrapping="Wrap"
-                 FontSize="20"
-                 TextChanged="MemoTextBox_TextChanged"
-                 Margin="5"/>
+                     Grid.Row="0"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     TextWrapping="Wrap"
+                     TextChanged="MemoTextBox_TextChanged"/>
 
-            <Button x:Name="SaveMemoButton" Grid.Row="1" Content="保存" FontSize="20" Width="124" Click="SaveMemoButton_Click" Margin="5"/>
+            <Button x:Name="SaveMemoButton"
+                    Grid.Row="1"
+                    Content="💾 保存"
+                    Click="SaveMemoButton_Click"
+                    HorizontalAlignment="Right"/>
         </Grid>
     </Grid>
 </Window>
