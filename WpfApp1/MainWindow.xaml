@@ -6,16 +6,11 @@
         Background="#FFF8FB">
 
     <Window.Resources>
-        <!-- 🎀 カラーパレット -->
         <SolidColorBrush x:Key="PrimaryPink" Color="#FFB6C1"/>
-        <!-- ほんのりピンク -->
         <SolidColorBrush x:Key="AccentPink" Color="#FF69B4"/>
-        <!-- 強めピンク -->
         <SolidColorBrush x:Key="SoftBackground" Color="#FFF8FB"/>
-        <!-- 背景 -->
         <SolidColorBrush x:Key="SoftBorder" Color="#FFD6E3"/>
 
-        <!-- 💖 ボタンスタイル -->
         <Style TargetType="Button">
             <Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
             <Setter Property="Foreground" Value="White"/>
@@ -48,7 +43,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- 💌 TextBox（角丸＋ふんわり影） -->
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Margin" Value="5"/>
@@ -63,7 +57,6 @@
             </Setter>
         </Style>
 
-        <!-- 🌼 ListBoxデザイン -->
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="{StaticResource SoftBorder}"/>
@@ -102,22 +95,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 上部ボタン -->
         <Button x:Name="NewMemoButton"
                 Grid.Row="0" Grid.Column="0"
                 Content="＋ 新規作成"
                 Click="NewMemoButton_Click"/>
 
-        <!-- タイトル入力 -->
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
             <Label Content="タイトル:" FontSize="20" VerticalAlignment="Center"/>
             <TextBox x:Name="TitleTextBox" Width="300" TextChanged="TitleTextBox_TextChanged"/>
             <TextBlock x:Name="SaveStatus" Text="" Foreground="{StaticResource AccentPink}" Margin="20,0,0,0" FontSize="16"/>
         </StackPanel>
         
-
-
-        <!-- 左：メモ一覧 -->
         <ListBox x:Name="MemoTitleListBox"
                  Grid.Row="1" Grid.Column="0"
                  ItemsSource="{Binding Memos}"
@@ -129,7 +117,6 @@
                  MouseMove="MemoTitleListBox_MouseMove"
                  Drop="ListBox_Drop"/>
 
-        <!-- 右：メモ本文 -->
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
